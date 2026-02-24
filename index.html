@@ -11,8 +11,6 @@
 
   :root {
     --blue: #2B5BE8;
-    --blue-dark: #1e44c4;
-    --blue-light: #4a74ff;
     --white: #ffffff;
     --gray-cam: #b0b8c1;
   }
@@ -29,99 +27,40 @@
     display: flex;
     flex-direction: column;
     height: 100dvh;
-    position: relative;
+    width: 100%;
   }
 
-  /* ── HEADER ── */
-  .header {
-    background: var(--blue);
+  /* ── TOP IMAGE (above.png) ── */
+  .top-image-wrap {
     flex-shrink: 0;
-    position: relative;
-    z-index: 10;
-    /* height will be auto based on dog height */
-    padding-top: 12px;
-    padding-bottom: 0;
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    padding-left: 16px;
-    padding-right: 16px;
+    width: 100%;
+    background: var(--blue);
+    line-height: 0; /* remove inline gap */
   }
 
-  .header-left {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 4px;
-    padding-bottom: 10px;
+  .top-image-wrap img {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
   }
 
-  .app-title {
+  /* Fallback when above.png not found */
+  .top-image-wrap .img-fallback {
+    width: 100%;
+    padding: 20px 20px 16px;
+    background: var(--blue);
+    display: none;
+    align-items: center;
+    justify-content: center;
+  }
+  .top-image-wrap .img-fallback span {
     font-family: 'Nunito', sans-serif;
     font-weight: 900;
     font-size: 22px;
-    color: var(--white);
+    color: white;
     letter-spacing: 1px;
-    line-height: 1;
   }
-
-  .app-subtitle {
-    font-size: 11px;
-    color: rgba(255,255,255,0.75);
-    letter-spacing: 0.5px;
-  }
-
-  /* Dog mascot peeking from header */
-  .dog-mascot-wrap {
-    position: relative;
-    flex-shrink: 0;
-    /* dog sits at bottom of header, hangs over camera area */
-    margin-bottom: -40px; /* overlap amount */
-    z-index: 20;
-  }
-
-  .dog-mascot {
-    width: 130px;
-    height: auto;
-    display: block;
-    filter: drop-shadow(0 4px 10px rgba(0,0,0,0.25));
-  }
-
-  /* header right controls */
-  .header-right {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 8px;
-    padding-bottom: 10px;
-  }
-
-  .mode-toggle {
-    background: rgba(255,255,255,0.2);
-    border: 1.5px solid rgba(255,255,255,0.4);
-    color: white;
-    font-family: 'Noto Sans KR', sans-serif;
-    font-size: 12px;
-    font-weight: 700;
-    padding: 6px 14px;
-    border-radius: 20px;
-    cursor: pointer;
-    transition: background 0.15s;
-  }
-  .mode-toggle:active { background: rgba(255,255,255,0.35); }
-
-  .flip-btn {
-    background: rgba(255,255,255,0.2);
-    border: 1.5px solid rgba(255,255,255,0.4);
-    color: white;
-    font-size: 16px;
-    width: 34px; height: 34px;
-    border-radius: 50%;
-    cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    transition: transform 0.3s;
-  }
-  .flip-btn:active { transform: rotate(180deg); }
 
   /* ── CAMERA AREA ── */
   .camera-area {
@@ -129,7 +68,7 @@
     position: relative;
     overflow: hidden;
     background: var(--gray-cam);
-    z-index: 5;
+    min-height: 0; /* important for flex shrink */
   }
 
   video {
@@ -145,18 +84,18 @@
     object-fit: cover;
   }
 
-  /* Mode label badge */
+  /* Mode badge */
   .mode-badge {
     position: absolute;
-    bottom: 14px;
+    bottom: 12px;
     left: 50%;
     transform: translateX(-50%);
-    background: rgba(43, 91, 232, 0.85);
+    background: rgba(43,91,232,0.82);
     backdrop-filter: blur(6px);
     color: white;
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 700;
-    padding: 5px 16px;
+    padding: 4px 14px;
     border-radius: 20px;
     white-space: nowrap;
     z-index: 6;
@@ -210,64 +149,74 @@
   .bottom-bar {
     background: var(--blue);
     flex-shrink: 0;
-    padding: 16px 32px 32px;
+    /* Safe area padding for notch phones */
+    padding: 14px 32px max(24px, env(safe-area-inset-bottom, 24px));
     display: flex;
     align-items: center;
     justify-content: space-between;
     z-index: 10;
-    gap: 16px;
   }
 
-  /* Preview thumb */
-  .preview-thumb {
+  /* Left: Flip button */
+  .flip-btn {
     width: 52px; height: 52px;
-    border-radius: 12px;
-    background: rgba(255,255,255,0.15);
-    border: 2px solid rgba(255,255,255,0.3);
-    overflow: hidden;
-    cursor: pointer;
-    flex-shrink: 0;
-    display: flex; align-items: center; justify-content: center;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.18);
+    border: 2px solid rgba(255,255,255,0.35);
+    color: white;
     font-size: 22px;
-    transition: transform 0.1s;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    transition: transform 0.3s, background 0.15s;
+    flex-shrink: 0;
   }
-  .preview-thumb:active { transform: scale(0.93); }
-  .preview-thumb img { width: 100%; height: 100%; object-fit: cover; }
+  .flip-btn:active { transform: rotate(180deg); background: rgba(255,255,255,0.3); }
 
-  /* Shutter */
+  /* Center: Shutter */
   .shutter-wrap {
     flex-shrink: 0;
-    position: relative;
     display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    transition: transform 0.1s;
   }
+  .shutter-wrap:active { transform: scale(0.88); }
 
   .shutter-outer {
     width: 76px; height: 76px;
     border-radius: 50%;
-    background: rgba(255,255,255,0.25);
+    background: rgba(255,255,255,0.22);
     display: flex; align-items: center; justify-content: center;
-    cursor: pointer;
-    transition: transform 0.1s;
   }
-  .shutter-outer:active { transform: scale(0.9); }
-
   .shutter-inner {
-    width: 60px; height: 60px;
+    width: 62px; height: 62px;
     border-radius: 50%;
     background: white;
     display: flex; align-items: center; justify-content: center;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+    box-shadow: 0 2px 12px rgba(0,0,0,0.18);
   }
 
-  .shutter-icon {
-    width: 28px; height: 28px;
-    /* Camera icon via SVG */
-  }
-
-  /* Spacer to balance layout */
-  .bottom-spacer {
+  /* Right: Mode toggle */
+  .mode-toggle {
     width: 52px; height: 52px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.18);
+    border: 2px solid rgba(255,255,255,0.35);
+    color: white;
+    font-size: 22px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    transition: background 0.15s;
     flex-shrink: 0;
+  }
+  .mode-toggle:active { background: rgba(255,255,255,0.3); }
+  .mode-toggle .icon-label {
+    font-size: 9px;
+    font-weight: 700;
+    margin-top: 2px;
+    line-height: 1;
+  }
+  .mode-btn-inner {
+    display: flex; flex-direction: column; align-items: center; gap: 1px;
   }
 
   /* ── GALLERY MODAL ── */
@@ -301,81 +250,17 @@
   }
   .btn-save { background: var(--blue); color: white; box-shadow: 0 4px 14px rgba(43,91,232,0.4); }
   .btn-close { background: rgba(255,255,255,0.12); color: white; }
-
 </style>
 </head>
 <body>
 <div class="app">
 
-  <!-- HEADER -->
-  <div class="header">
-    <div class="header-left">
-      <div class="app-title">🐾 Dog Vision</div>
-      <div class="app-subtitle">강아지의 눈으로 세상 보기</div>
-    </div>
-
-    <!-- Dog Mascot SVG (inline, so no external file needed) -->
-    <div class="dog-mascot-wrap">
-      <svg class="dog-mascot" viewBox="0 0 160 170" xmlns="http://www.w3.org/2000/svg">
-        <!-- Body peek (paws on ledge) -->
-        <!-- Left paw -->
-        <ellipse cx="38" cy="148" rx="26" ry="16" fill="white" stroke="white" stroke-width="1"/>
-        <ellipse cx="38" cy="148" rx="22" ry="13" fill="#d0d8f0"/>
-        <!-- Right paw -->
-        <ellipse cx="122" cy="148" rx="26" ry="16" fill="white" stroke="white" stroke-width="1"/>
-        <ellipse cx="122" cy="148" rx="22" ry="13" fill="#d0d8f0"/>
-
-        <!-- Neck/body -->
-        <ellipse cx="80" cy="115" rx="42" ry="38" fill="white"/>
-        <ellipse cx="80" cy="115" rx="36" ry="32" fill="#d0d8f0"/>
-
-        <!-- Head base -->
-        <ellipse cx="80" cy="75" rx="52" ry="50" fill="white"/>
-
-        <!-- Ears -->
-        <!-- Left ear -->
-        <ellipse cx="28" cy="55" rx="20" ry="32" fill="white" transform="rotate(-15 28 55)"/>
-        <ellipse cx="28" cy="55" rx="14" ry="26" fill="#d0d8f0" transform="rotate(-15 28 55)"/>
-        <!-- Right ear -->
-        <ellipse cx="132" cy="55" rx="20" ry="32" fill="white" transform="rotate(15 132 55)"/>
-        <ellipse cx="132" cy="55" rx="14" ry="26" fill="#d0d8f0" transform="rotate(15 132 55)"/>
-
-        <!-- Head fill over ears -->
-        <ellipse cx="80" cy="70" rx="48" ry="46" fill="white"/>
-
-        <!-- Face patch (darker fur) -->
-        <ellipse cx="80" cy="68" rx="40" ry="38" fill="#c4cde8"/>
-        <!-- White forehead/muzzle -->
-        <ellipse cx="80" cy="52" rx="24" ry="22" fill="white"/>
-        <ellipse cx="80" cy="86" rx="28" ry="22" fill="white"/>
-
-        <!-- Eyes -->
-        <circle cx="60" cy="60" r="10" fill="white"/>
-        <circle cx="100" cy="60" r="10" fill="white"/>
-        <circle cx="62" cy="61" r="7" fill="#1a3a9e"/>
-        <circle cx="102" cy="61" r="7" fill="#1a3a9e"/>
-        <circle cx="62" cy="61" r="3.5" fill="#0a1a5e"/>
-        <circle cx="102" cy="61" r="3.5" fill="#0a1a5e"/>
-        <!-- Eye shine -->
-        <circle cx="65" cy="58" r="2" fill="white"/>
-        <circle cx="105" cy="58" r="2" fill="white"/>
-
-        <!-- Nose -->
-        <ellipse cx="80" cy="80" rx="9" ry="7" fill="#1a3a9e"/>
-        <ellipse cx="78" cy="78" rx="3" ry="2" fill="rgba(255,255,255,0.4)"/>
-
-        <!-- Mouth -->
-        <path d="M71 88 Q80 96 89 88" stroke="#1a3a9e" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-
-        <!-- Eyebrows -->
-        <path d="M52 50 Q62 45 70 50" stroke="#9aa8d0" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-        <path d="M90 50 Q98 45 108 50" stroke="#9aa8d0" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-      </svg>
-    </div>
-
-    <div class="header-right">
-      <button class="mode-toggle" id="toggleMode">👤 인간 시점</button>
-      <button class="flip-btn" id="flipBtn">🔄</button>
+  <!-- TOP IMAGE: above.png를 같은 폴더에 넣으면 자동 표시됩니다 -->
+  <div class="top-image-wrap" id="topImageWrap">
+    <img id="topImg" src="above.png" alt="top banner"
+         onerror="this.style.display='none'; document.getElementById('topFallback').style.display='flex';">
+    <div class="img-fallback" id="topFallback">
+      <span>🐾 DOG VISION &nbsp;·&nbsp; above.png를 추가하세요</span>
     </div>
   </div>
 
@@ -392,15 +277,17 @@
     </div>
   </div>
 
-  <!-- BOTTOM BAR -->
+  <!-- BOTTOM BAR: [🔄] [📸] [🐶/👤] -->
   <div class="bottom-bar">
-    <div class="preview-thumb" id="previewThumb">🐾</div>
 
+    <!-- 전/후면 전환 -->
+    <button class="flip-btn" id="flipBtn" title="카메라 전환">🔄</button>
+
+    <!-- 셔터 -->
     <div class="shutter-wrap" id="shutterBtn">
       <div class="shutter-outer">
         <div class="shutter-inner">
-          <!-- Camera SVG icon -->
-          <svg viewBox="0 0 28 28" class="shutter-icon" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <svg width="30" height="30" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M10.5 4.5L9 7H4.5C3.4 7 2.5 7.9 2.5 9V21C2.5 22.1 3.4 23 4.5 23H23.5C24.6 23 25.5 22.1 25.5 21V9C25.5 7.9 24.6 7 23.5 7H19L17.5 4.5H10.5Z" fill="#2B5BE8" stroke="#2B5BE8" stroke-width="0.5" stroke-linejoin="round"/>
             <circle cx="14" cy="15" r="4.5" fill="white"/>
             <circle cx="14" cy="15" r="2.8" fill="#2B5BE8"/>
@@ -410,9 +297,15 @@
       </div>
     </div>
 
-    <div class="bottom-spacer"></div>
-  </div>
+    <!-- 강아지/인간 시점 토글 -->
+    <button class="mode-toggle" id="toggleMode" title="시점 전환">
+      <div class="mode-btn-inner">
+        <span id="modeEmoji">🐶</span>
+        <span class="icon-label" id="modeLabel">강아지</span>
+      </div>
+    </button>
 
+  </div>
 </div>
 
 <!-- GALLERY MODAL -->
@@ -428,7 +321,7 @@
 
 <script>
 // ══ CONFIG ══════════════════════════════════
-const FRAME_PNG_PATH     = 'frame.png';   // 같은 폴더에 frame.png 추가 시 자동 적용
+const FRAME_PNG_PATH     = 'frame.png';
 const FRAME_HEIGHT_RATIO = 0.18;
 // ════════════════════════════════════════════
 
@@ -438,32 +331,33 @@ let isDogMode = true;
 let animFrame = null;
 let lastDataUrl = null;
 
-const video          = document.getElementById('video');
-const viewCanvas     = document.getElementById('viewCanvas');
-const ctx            = viewCanvas.getContext('2d', { willReadFrequently: true });
-const permOverlay    = document.getElementById('permOverlay');
-const startBtn       = document.getElementById('startBtn');
-const flipBtn        = document.getElementById('flipBtn');
-const toggleMode     = document.getElementById('toggleMode');
-const modeBadge      = document.getElementById('modeBadge');
-const shutterBtn     = document.getElementById('shutterBtn');
-const flashOverlay   = document.getElementById('flashOverlay');
-const previewThumb   = document.getElementById('previewThumb');
-const galleryModal   = document.getElementById('galleryModal');
-const galleryImg     = document.getElementById('galleryImg');
-const saveBtn        = document.getElementById('saveBtn');
-const closeModal     = document.getElementById('closeModal');
-const captureCanvas  = document.getElementById('captureCanvas');
+const video         = document.getElementById('video');
+const viewCanvas    = document.getElementById('viewCanvas');
+const ctx           = viewCanvas.getContext('2d', { willReadFrequently: true });
+const permOverlay   = document.getElementById('permOverlay');
+const startBtn      = document.getElementById('startBtn');
+const flipBtn       = document.getElementById('flipBtn');
+const toggleMode    = document.getElementById('toggleMode');
+const modeEmoji     = document.getElementById('modeEmoji');
+const modeLabelEl   = document.getElementById('modeLabel');
+const modeBadge     = document.getElementById('modeBadge');
+const shutterBtn    = document.getElementById('shutterBtn');
+const flashOverlay  = document.getElementById('flashOverlay');
+const galleryModal  = document.getElementById('galleryModal');
+const galleryImg    = document.getElementById('galleryImg');
+const saveBtn       = document.getElementById('saveBtn');
+const closeModal    = document.getElementById('closeModal');
+const captureCanvas = document.getElementById('captureCanvas');
 
 // ── Dog Vision Color Mapping ──────────────
 function rgbToDog(r, g, b) {
-  const rn = r/255, gn = g/255, bn = b/255;
-  const max = Math.max(rn,gn,bn), min = Math.min(rn,gn,bn);
-  const l = (max+min)/2;
+  const rn=r/255, gn=g/255, bn=b/255;
+  const max=Math.max(rn,gn,bn), min=Math.min(rn,gn,bn);
+  const l=(max+min)/2;
   let h=0, s=0;
   if (max!==min) {
     const d=max-min;
-    s = l>0.5 ? d/(2-max-min) : d/(max+min);
+    s=l>0.5?d/(2-max-min):d/(max+min);
     switch(max){
       case rn: h=((gn-bn)/d+(gn<bn?6:0))/6; break;
       case gn: h=((bn-rn)/d+2)/6; break;
@@ -472,7 +366,7 @@ function rgbToDog(r, g, b) {
   }
   const hDeg=h*360;
   let dH, dS, dL=l;
-  if (s<0.08) { return [Math.round(l*255),Math.round(l*255),Math.round(l*255)]; }
+  if (s<0.08) { const v=Math.round(l*255); return [v,v,v]; }
   if      (hDeg< 30) { dH=58;  dS=s*0.55; dL=l*0.88; }
   else if (hDeg< 65) { dH=55;  dS=s*0.9;  dL=l;      }
   else if (hDeg<175) { dH=0;   dS=0;      dL=l;      }
@@ -499,7 +393,7 @@ function hslToRgb(h,s,l) {
 function renderFrame() {
   if (video.readyState>=2 && video.videoWidth>0) {
     const vw=video.videoWidth, vh=video.videoHeight;
-    if (viewCanvas.width!==vw||viewCanvas.height!==vh) {
+    if (viewCanvas.width!==vw || viewCanvas.height!==vh) {
       viewCanvas.width=vw; viewCanvas.height=vh;
     }
     ctx.drawImage(video,0,0,vw,vh);
@@ -533,61 +427,73 @@ async function startCamera() {
 }
 
 startBtn.addEventListener('click', startCamera);
-flipBtn.addEventListener('click', () => { facingMode=facingMode==='environment'?'user':'environment'; startCamera(); });
+
+flipBtn.addEventListener('click', () => {
+  facingMode = facingMode==='environment' ? 'user' : 'environment';
+  startCamera();
+});
+
 toggleMode.addEventListener('click', () => {
-  isDogMode=!isDogMode;
-  toggleMode.textContent = isDogMode ? '👤 인간 시점' : '🐶 강아지 시점';
-  modeBadge.textContent  = isDogMode ? '🐶 강아지 시점' : '👤 인간 시점';
+  isDogMode = !isDogMode;
+  if (isDogMode) {
+    modeEmoji.textContent = '🐶';
+    modeLabelEl.textContent = '강아지';
+    modeBadge.textContent = '🐶 강아지 시점';
+  } else {
+    modeEmoji.textContent = '👤';
+    modeLabelEl.textContent = '인간';
+    modeBadge.textContent = '👤 인간 시점';
+  }
 });
 
 // ── Frame image ───────────────────────────
-let frameImg=new Image();
-frameImg.onload=()=>console.log('✓ frame.png 로드');
-frameImg.onerror=()=>{ frameImg=null; };
-frameImg.src=FRAME_PNG_PATH;
+let frameImg = new Image();
+frameImg.onload  = () => console.log('✓ frame.png 로드');
+frameImg.onerror = () => { frameImg = null; };
+frameImg.src = FRAME_PNG_PATH;
 
 // ── Capture ───────────────────────────────
 shutterBtn.addEventListener('click', () => {
   if (!stream) return;
+
   flashOverlay.classList.add('active');
-  setTimeout(()=>flashOverlay.classList.remove('active'), 80);
+  setTimeout(() => flashOverlay.classList.remove('active'), 80);
 
   const vw=viewCanvas.width, vh=viewCanvas.height;
   if (!vw||!vh) return;
-  const frameH=Math.round(vh*FRAME_HEIGHT_RATIO);
-  captureCanvas.width=vw; captureCanvas.height=vh+frameH;
-  const cc=captureCanvas.getContext('2d');
-  cc.drawImage(viewCanvas,0,0,vw,vh);
 
-  if (frameImg&&frameImg.complete&&frameImg.naturalWidth>0) {
-    cc.drawImage(frameImg,0,vh,vw,frameH);
+  const frameH = Math.round(vh * FRAME_HEIGHT_RATIO);
+  captureCanvas.width  = vw;
+  captureCanvas.height = vh + frameH;
+
+  const cc = captureCanvas.getContext('2d');
+  cc.drawImage(viewCanvas, 0, 0, vw, vh);
+
+  if (frameImg && frameImg.complete && frameImg.naturalWidth>0) {
+    cc.drawImage(frameImg, 0, vh, vw, frameH);
   } else {
-    cc.fillStyle='#2B5BE8';
-    cc.fillRect(0,vh,vw,frameH);
-    cc.fillStyle='rgba(255,255,255,0.8)';
-    cc.font=`bold ${Math.round(vw*0.033)}px sans-serif`;
-    cc.textAlign='center'; cc.textBaseline='middle';
+    cc.fillStyle = '#2B5BE8';
+    cc.fillRect(0, vh, vw, frameH);
+    cc.fillStyle = 'rgba(255,255,255,0.8)';
+    cc.font = `bold ${Math.round(vw*0.033)}px sans-serif`;
+    cc.textAlign = 'center'; cc.textBaseline = 'middle';
     cc.fillText('🐾 DOG VISION  ·  frame.png를 추가하세요', vw/2, vh+frameH/2);
   }
 
-  lastDataUrl=captureCanvas.toDataURL('image/jpeg',0.93);
-  previewThumb.innerHTML=`<img src="${lastDataUrl}" alt="preview">`;
-  galleryImg.src=lastDataUrl;
+  lastDataUrl = captureCanvas.toDataURL('image/jpeg', 0.93);
+  galleryImg.src = lastDataUrl;
   galleryModal.classList.add('open');
 });
 
 saveBtn.addEventListener('click', () => {
   if (!lastDataUrl) return;
-  const a=document.createElement('a');
-  a.href=lastDataUrl; a.download=`dogvision_${Date.now()}.jpg`;
+  const a = document.createElement('a');
+  a.href = lastDataUrl;
+  a.download = `dogvision_${Date.now()}.jpg`;
   document.body.appendChild(a); a.click(); document.body.removeChild(a);
 });
 
-closeModal.addEventListener('click', ()=>galleryModal.classList.remove('open'));
-previewThumb.addEventListener('click', ()=>{
-  if (!lastDataUrl) return;
-  galleryImg.src=lastDataUrl; galleryModal.classList.add('open');
-});
+closeModal.addEventListener('click', () => galleryModal.classList.remove('open'));
 </script>
 </body>
 </html>
