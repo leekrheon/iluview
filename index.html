@@ -396,7 +396,14 @@ function renderFrame() {
     if (viewCanvas.width!==vw || viewCanvas.height!==vh) {
       viewCanvas.width=vw; viewCanvas.height=vh;
     }
-    ctx.drawImage(video,0,0,vw,vh);
+    if (facingMode==='user') {
+      ctx.save();
+      ctx.scale(-1,1);
+      ctx.drawImage(video,-vw,0,vw,vh);
+      ctx.restore();
+    } else {
+      ctx.drawImage(video,0,0,vw,vh);
+    }
     if (isDogMode) {
       const id=ctx.getImageData(0,0,vw,vh), d=id.data;
       for (let i=0;i<d.length;i+=4) {
@@ -462,22 +469,25 @@ shutterBtn.addEventListener('click', () => {
   const vw=viewCanvas.width, vh=viewCanvas.height;
   if (!vw||!vh) return;
 
-  const frameH = Math.round(vh * FRAME_HEIGHT_RATIO);
-  captureCanvas.width  = vw;
-  captureCanvas.height = vh + frameH;
+  const side = Math.min(vw, vh);
+  const sx = Math.floor((vw - side)/2);
+  const sy = Math.floor((vh - side)/2);
+  const frameH = Math.round(side * FRAME_HEIGHT_RATIO);
+  captureCanvas.width  = side;
+  captureCanvas.height = side + frameH;
 
   const cc = captureCanvas.getContext('2d');
-  cc.drawImage(viewCanvas, 0, 0, vw, vh);
+  cc.drawImage(viewCanvas, sx, sy, side, side, 0, 0, side, side);
 
   if (frameImg && frameImg.complete && frameImg.naturalWidth>0) {
-    cc.drawImage(frameImg, 0, vh, vw, frameH);
+    cc.drawImage(frameImg, 0, side, side, frameH);
   } else {
     cc.fillStyle = '#2B5BE8';
-    cc.fillRect(0, vh, vw, frameH);
+    cc.fillRect(0, side, side, frameH);
     cc.fillStyle = 'rgba(255,255,255,0.8)';
-    cc.font = `bold ${Math.round(vw*0.033)}px sans-serif`;
+    cc.font = `bold ${Math.round(side*0.033)}px sans-serif`;
     cc.textAlign = 'center'; cc.textBaseline = 'middle';
-    cc.fillText('🐾 DOG VISION  ·  frame.png를 추가하세요', vw/2, vh+frameH/2);
+    cc.fillText('🐾 DOG VISION  ·  frame.png를 추가하세요', side/2, side+frameH/2);
   }
 
   lastDataUrl = captureCanvas.toDataURL('image/jpeg', 0.93);
